@@ -11,16 +11,6 @@ typealias HexColor = UIColor
 
 public extension HexColor {
     
-    var image:UIImage {
-        let rect: CGRect = CGRect(x: 0, y: 0, width: 1, height: 1)
-        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
-        self.setFill()
-        UIRectFill(rect)
-        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext() ?? UIImage()
-        UIGraphicsEndImageContext()
-        return image
-    }
-    
     convenience init(hex: String) {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
@@ -50,12 +40,10 @@ public extension HexColor {
         self.init(red: r / 255.0, green: g / 255.0, blue: b / 255.0, alpha: a)
     }
     
-    // MARK: - From UIColor to String
+    // MARK: - From UIColor to Hex String
     
     func toHex(alpha: Bool = false) -> String? {
-        guard let components = cgColor.components, components.count >= 3 else {
-            return nil
-        }
+        guard let components = cgColor.components, components.count >= 3 else { return nil }
         
         let r = Float(components[0])
         let g = Float(components[1])
@@ -73,4 +61,15 @@ public extension HexColor {
         }
     }
     
+    
+    func image() -> UIImage {
+        let rect:CGRect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
+        self.setFill()
+        UIRectFill(rect)
+        let image:UIImage = UIGraphicsGetImageFromCurrentImageContext() ?? UIImage()
+        UIGraphicsEndImageContext()
+        return image
+    }
+
 }
