@@ -15,7 +15,7 @@ public extension HexColor {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
         
-        var rgb: UInt32 = 0
+        var hexValue: UInt64 = 0
         
         var r: CGFloat = 0.0
         var g: CGFloat = 0.0
@@ -23,21 +23,40 @@ public extension HexColor {
         var a: CGFloat = 1.0
         
         let scanner = Scanner(string: hexSanitized)
-        scanner.scanHexInt32(&rgb)
+        scanner.scanHexInt64(&hexValue)
         
         let length = hexSanitized.count
-        if length == 6 {
-            r = CGFloat((rgb & 0xFF0000) >> 16)
-            g = CGFloat((rgb & 0x00FF00) >> 8)
-            b = CGFloat(rgb & 0x0000FF)
+        switch length {
+        case 3:
+            let divisor:CGFloat = 15.0
+            r = CGFloat((hexValue & 0xF00) >> 8) / divisor
+            g = CGFloat((hexValue & 0x0F0) >> 4) / divisor
+            b = CGFloat(hexValue & 0x00F) / divisor
             
-        } else if length == 8 {
-            r = CGFloat((rgb & 0xFF000000) >> 24)
-            g = CGFloat((rgb & 0x00FF0000) >> 16)
-            b = CGFloat((rgb & 0x0000FF00) >> 8)
-            a = CGFloat(rgb & 0x000000FF)
+        case 4:
+            let divisor:CGFloat = 15.0
+            r = CGFloat((hexValue & 0xF000) >> 12) / divisor
+            g = CGFloat((hexValue & 0x0F00) >> 8) / divisor
+            b = CGFloat((hexValue & 0x00F0) >> 4) / divisor
+            a = CGFloat( hexValue & 0x000F) / divisor
+            
+        case 6:
+            let divisor:CGFloat = 255.0
+            r = CGFloat((hexValue & 0xFF0000) >> 16) / divisor
+            g = CGFloat((hexValue & 0x00FF00) >> 8) / divisor
+            b = CGFloat(hexValue & 0x0000FF) / divisor
+            
+        case 8:
+            let divisor:CGFloat = 255.0
+            r = CGFloat((hexValue & 0xFF000000) >> 24) / divisor
+            g = CGFloat((hexValue & 0x00FF0000) >> 16) / divisor
+            b = CGFloat((hexValue & 0x0000FF00) >> 8) / divisor
+            a = CGFloat(hexValue & 0x000000FF)
+            
+        default:
+            break
         }
-        self.init(red: r / 255.0, green: g / 255.0, blue: b / 255.0, alpha: a)
+        self.init(red: r, green: g, blue: b, alpha: a)
     }
     
     // MARK: - From UIColor to Hex String
@@ -61,7 +80,6 @@ public extension HexColor {
         }
     }
     
-    
     func image() -> UIImage {
         let rect:CGRect = CGRect(x: 0, y: 0, width: 1, height: 1)
         UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
@@ -72,4 +90,8 @@ public extension HexColor {
         return image
     }
 
+    func withAlpha(_ alpha:CGFloat) {
+        self.withAlphaComponent(alpha)
+    }
+    
 }
