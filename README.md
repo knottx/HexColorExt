@@ -1,4 +1,4 @@
-**AppStoreManager** is a new version checking framework for iOS.
+**HexColorExt** is an extension for handling color in Swift.
 
 ## 📲 Installation
 
