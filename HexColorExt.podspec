@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "HexColorExt"
-  spec.version      = "1.1.0"
+  spec.version      = "1.2.0"
   spec.summary      = "An extension for UIColor."
 
   spec.homepage     = "https://knottx.github.io"
